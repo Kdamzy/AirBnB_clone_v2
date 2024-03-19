@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from utils import list_to_dict
 
 
 class HBNBCommand(cmd.Cmd):
@@ -115,13 +116,21 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
+        args = args.split(' ')
+        model = args[0]
+
+        if not model:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif model not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        new_instance = HBNBCommand.classes[model]()
+        fields = list_to_dict(args[1:])
+
+        for key, value in fields.items():
+            setattr(new_instance, key, value)
+
         storage.save()
         print(new_instance.id)
         storage.save()
